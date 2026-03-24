@@ -106,7 +106,8 @@ daily at 8:00 AM AWST.
 
 Current Task Settings:
   - Task Name:          DailySafetyIncidentReport
-  - Schedule:           Daily at 8:00 AM
+  - Schedule:           Daily at 8:00 AM AWST (Perth, Western Australia)
+  - Time Zone:          W. Australia Standard Time (UTC+08:00)
   - Status:             Ready (Enabled)
   - Start When Available: Yes (runs at next opportunity if PC was off at 8am)
   - Run On Battery:     Yes
