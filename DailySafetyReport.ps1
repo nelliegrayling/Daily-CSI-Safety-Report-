@@ -59,21 +59,38 @@ try {
             # Parse fields from email body
             $RefNo = if ($Body -match "Reference No:\s*(\d+)") { $Matches[1] } else { "-" }
             $EventSubType = if ($Body -match "Event Sub Type:\s*([^\r\n]+)") { $Matches[1].Trim() } else { "-" }
-            $DateReported = if ($Body -match "Date Reported:\s*([^\r\n]+)") { $Matches[1].Trim() } else { "-" }
+            $DateReportedStr = if ($Body -match "Date Reported:\s*([^\r\n]+)") { $Matches[1].Trim() } else { "-" }
             $Workgroup = if ($Body -match "Workgroup:\s*([^\r\n]+)") { $Matches[1].Trim() } else { "-" }
             $BriefDesc = if ($Body -match "Brief Description:\s*([^\r\n]+)") { $Matches[1].Trim() } else { "-" }
 
-            $Incidents += [PSCustomObject]@{
-                ReceivedTime  = $Email.ReceivedTime.ToString("dd/MM/yyyy HH:mm")
-                Potential     = $Potential
-                RefNo         = $RefNo
-                DateReported  = $DateReported
-                Workgroup     = $Workgroup
-                EventSubType  = $EventSubType
-                BriefDesc     = $BriefDesc
+            # Parse DateReported and check if within report period
+            $IncludeInReport = $false
+            try {
+                # Parse date format like "23-Mar-26" (dd-MMM-yy)
+                $DateReportedParsed = [DateTime]::ParseExact($DateReportedStr, "dd-MMM-yy", [System.Globalization.CultureInfo]::InvariantCulture)
+                # Check if DateReported falls within the 24-hour report period (date only comparison)
+                if ($DateReportedParsed.Date -ge $StartTime.Date -and $DateReportedParsed.Date -le $EndTime.Date) {
+                    $IncludeInReport = $true
+                }
+            } catch {
+                # If date parsing fails, exclude from report
+                $IncludeInReport = $false
             }
 
-            # Store email object for moving later
+            # Only add to incidents if DateReported is within report period
+            if ($IncludeInReport) {
+                $Incidents += [PSCustomObject]@{
+                    ReceivedTime  = $Email.ReceivedTime.ToString("dd/MM/yyyy HH:mm")
+                    Potential     = $Potential
+                    RefNo         = $RefNo
+                    DateReported  = $DateReportedStr
+                    Workgroup     = $Workgroup
+                    EventSubType  = $EventSubType
+                    BriefDesc     = $BriefDesc
+                }
+            }
+
+            # Store email object for moving later (move all processed emails, even if not in report)
             $ProcessedEmails += $Email
         }
     }

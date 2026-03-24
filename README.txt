@@ -33,6 +33,14 @@ Current Settings:
   - Processed Folder:  Inbox\Safety Incidents - Processed
   - Logo:              H:\Other\CSI Logo\CSI logo (black).png
 
+Incident Filtering:
+  - Only incidents where "Date Reported" falls within the 24-hour report
+    period are included in the report
+  - Emails received within 24hrs but with older "Date Reported" are still
+    moved to the processed folder but NOT included in the report
+  - This ensures the report only shows incidents that occurred within the
+    reporting window
+
 To change settings, edit the Configuration section at the top of the script:
   $SenderEmail          - Email address to filter by
   $RecipientEmail       - Where to send the report
