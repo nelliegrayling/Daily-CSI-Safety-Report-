@@ -102,7 +102,19 @@ SCHEDULED TASK
 ================================================================================
 
 A Windows Scheduled Task named "DailySafetyIncidentReport" runs this script
-daily at 8:00 AM.
+daily at 8:00 AM AWST.
+
+Current Task Settings:
+  - Task Name:          DailySafetyIncidentReport
+  - Schedule:           Daily at 8:00 AM
+  - Status:             Ready (Enabled)
+  - Start When Available: Yes (runs at next opportunity if PC was off at 8am)
+  - Run On Battery:     Yes
+
+Requirements for scheduled task to run:
+  - PC must be powered on (or will run when next available)
+  - Outlook must be running or able to start
+  - User must be logged in (runs under your user account)
 
 To view/modify the task:
   1. Press Windows + R
