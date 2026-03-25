@@ -29,9 +29,10 @@ Current Settings:
   - Recipient:         nellie.grayling@mrl.com.au
   - Schedule:          8:00 AM daily (AWST)
   - Time Range:        Previous 24 hours
-  - Source Folder:     Main Inbox
+  - Source Folder:     Inbox\Safety Incidents (falls back to Inbox if empty)
   - Processed Folder:  Inbox\Safety Incidents - Processed
   - Logo:              H:\Other\CSI Logo\CSI logo (black).png
+  - Format:            Mobile-friendly responsive design
 
 Incident Filtering:
   - Only incidents where "Date Reported" falls within the 24-hour report
@@ -40,6 +41,25 @@ Incident Filtering:
     moved to the processed folder but NOT included in the report
   - This ensures the report only shows incidents that occurred within the
     reporting window
+
+================================================================================
+OUTLOOK RULE SETUP
+================================================================================
+
+To automatically move safety emails to the Safety Incidents folder:
+
+1. In Outlook, go to File > Manage Rules & Alerts
+2. Click "New Rule"
+3. Select "Apply rule on messages I receive" > Next
+4. Check "from people or public group"
+5. Click "people or public group" and enter: noreply@inxsoftware.com
+6. Click Next
+7. Check "move it to the specified folder"
+8. Click "specified" and select/create "Safety Incidents" under Inbox
+9. Click Next > Next > Finish
+10. Check "Run this rule now" if you have existing emails to move
+
+The script will read from this folder. If empty, it falls back to main Inbox.
 
 To change settings, edit the Configuration section at the top of the script:
   $SenderEmail          - Email address to filter by
@@ -68,18 +88,23 @@ To disable this feature:
 REPORT FORMAT
 ================================================================================
 
+Mobile-Friendly Responsive Design:
+  - Optimized for viewing on phones, tablets, and desktop
+  - Card-based layout for easy reading on small screens
+  - Touch-friendly sizing and spacing
+
 Header:
   - CSI Mining Services logo (black version) on the left
   - Report title on the right
   - Red underline separator
 
-The report includes a table with these columns:
-  - Potential       Color-coded badge (Low/Minor/Medium/High/Critical)
-  - Ref No          INX reference number
-  - Date Reported   When incident was reported
-  - Workgroup       Site/team location
-  - Event Type      Injury type, Asset Damage, etc.
-  - Brief Desc      Summary of the incident
+Each incident card displays:
+  - Reference Number (bold header)
+  - Potential badge (color-coded: Low/Minor/Medium/High/Critical)
+  - Date Reported
+  - Workgroup (site/team location)
+  - Event Type (Injury, Asset Damage, etc.)
+  - Description (full incident summary)
 
 Styling follows MRL Brand Guidelines:
   - Font: Century Gothic
