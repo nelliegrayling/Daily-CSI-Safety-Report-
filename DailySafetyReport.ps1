@@ -143,11 +143,12 @@ try {
     .summary strong { color: #ce372f; text-transform: uppercase; }
     .no-incidents { color: #000000; font-weight: bold; }
     .footer { font-size: 9pt; color: #544741; margin-top: 20px; padding-top: 10px; border-top: 1px solid #e0c09d; }
-    .potential-low { background-color: #4b9ba6; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
-    .potential-minor { background-color: #998500; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
-    .potential-moderate { background-color: #c37c59; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
-    .potential-high { background-color: #ce372f; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
-    .potential-critical { background-color: #000000; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
+    .potential-badge { display: inline-block; padding: 5px 14px; font-weight: bold; font-size: 9pt; border-radius: 3px; white-space: nowrap; text-align: center; min-width: 60px; }
+    .potential-low { background-color: #4b9ba6; color: #ffffff; }
+    .potential-minor { background-color: #998500; color: #ffffff; }
+    .potential-moderate { background-color: #c37c59; color: #ffffff; }
+    .potential-high { background-color: #ce372f; color: #ffffff; }
+    .potential-critical { background-color: #000000; color: #ffffff; }
 
     /* Mobile responsive styles */
     @media screen and (max-width: 768px) {
@@ -220,7 +221,7 @@ try {
 
             $HtmlBody += @"
     <tr>
-        <td data-label="Potential"><span class="$PotentialClass">$PotentialText</span></td>
+        <td data-label="Potential"><span class="potential-badge $PotentialClass">$PotentialText</span></td>
         <td data-label="Ref No">$($Incident.RefNo)</td>
         <td data-label="Date Reported">$($Incident.DateReported)</td>
         <td data-label="Workgroup">$SafeWorkgroup</td>
