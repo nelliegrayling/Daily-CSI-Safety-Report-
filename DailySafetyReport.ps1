@@ -121,145 +121,48 @@ try {
         $LogoBase64 = [System.Convert]::ToBase64String($LogoBytes)
     }
 
-    # Build HTML report - MRL Brand Guidelines with Mobile-Responsive Design
+    # Build HTML report - MRL Brand Guidelines with Responsive Table Layout
     $HtmlHead = @"
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    /* Base styles */
-    body {
-        font-family: 'Century Gothic', Arial, sans-serif;
-        font-size: 14px;
-        color: #000000;
-        margin: 0;
-        padding: 15px;
-        -webkit-text-size-adjust: 100%;
-    }
+    body { font-family: 'Century Gothic', sans-serif; font-size: 10pt; color: #000000; margin: 0; padding: 20px; -webkit-text-size-adjust: 100%; }
+    .header { display: table; width: 100%; margin-bottom: 20px; border-bottom: 3px solid #ce372f; padding-bottom: 15px; }
+    .header-logo { display: table-cell; vertical-align: middle; width: 150px; }
+    .header-logo img { max-height: 60px; max-width: 140px; }
+    .header-title { display: table-cell; vertical-align: middle; }
+    h1 { color: #ce372f; font-size: 18pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+    table.data { border-collapse: collapse; width: 100%; margin-top: 15px; }
+    th { background-color: #ce372f; color: #ffffff; padding: 8px 10px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9pt; }
+    td { border: 1px solid #e0c09d; padding: 8px 10px; vertical-align: top; font-size: 9pt; }
+    tr:nth-child(odd) td { background-color: #ffffff; }
+    tr:nth-child(even) td { background-color: #f7f5f2; }
+    .summary { background-color: #f1ede7; padding: 15px; margin-bottom: 15px; border-left: 4px solid #ce372f; }
+    .summary strong { color: #ce372f; text-transform: uppercase; }
+    .no-incidents { color: #000000; font-weight: bold; }
+    .footer { font-size: 9pt; color: #544741; margin-top: 20px; padding-top: 10px; border-top: 1px solid #e0c09d; }
+    .potential-low { background-color: #4b9ba6; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
+    .potential-minor { background-color: #998500; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
+    .potential-moderate { background-color: #c37c59; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
+    .potential-high { background-color: #ce372f; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
+    .potential-critical { background-color: #000000; color: #ffffff; padding: 3px 8px; font-weight: bold; font-size: 8pt; display: inline-block; }
 
-    /* Header - stacks on mobile */
-    .header {
-        width: 100%;
-        margin-bottom: 20px;
-        border-bottom: 3px solid #ce372f;
-        padding-bottom: 15px;
-    }
-    .header-logo {
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 15px;
-        margin-bottom: 10px;
-    }
-    .header-logo img {
-        max-height: 50px;
-        max-width: 120px;
-        width: auto;
-    }
-    .header-title {
-        display: inline-block;
-        vertical-align: middle;
-    }
-    h1 {
-        color: #ce372f;
-        font-size: 18px;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin: 0;
-    }
-
-    /* Summary box */
-    .summary {
-        background-color: #f1ede7;
-        padding: 15px;
-        margin-bottom: 15px;
-        border-left: 4px solid #ce372f;
-        font-size: 14px;
-    }
-    .summary strong {
-        color: #ce372f;
-        text-transform: uppercase;
-    }
-    .no-incidents {
-        color: #000000;
-        font-weight: bold;
-        padding: 20px;
-        text-align: center;
-    }
-
-    /* Mobile card layout for incidents */
-    .incident-card {
-        background-color: #ffffff;
-        border: 1px solid #e0c09d;
-        border-left: 4px solid #ce372f;
-        margin-bottom: 15px;
-        padding: 15px;
-        border-radius: 4px;
-    }
-    .incident-card:nth-child(even) {
-        background-color: #f7f5f2;
-    }
-    .incident-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    .incident-ref {
-        font-weight: bold;
-        font-size: 16px;
-        color: #000000;
-    }
-    .incident-row {
-        margin-bottom: 8px;
-        font-size: 13px;
-    }
-    .incident-label {
-        font-weight: bold;
-        color: #544741;
-        display: inline-block;
-        min-width: 100px;
-    }
-    .incident-value {
-        color: #000000;
-    }
-    .incident-desc {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid #e0c09d;
-        font-size: 13px;
-    }
-
-    /* Potential badges */
-    .potential-badge {
-        display: inline-block;
-        padding: 5px 12px;
-        font-weight: bold;
-        font-size: 12px;
-        border-radius: 3px;
-        text-transform: uppercase;
-    }
-    .potential-low { background-color: #4b9ba6; color: #ffffff; }
-    .potential-minor { background-color: #998500; color: #ffffff; }
-    .potential-moderate { background-color: #c37c59; color: #ffffff; }
-    .potential-high { background-color: #ce372f; color: #ffffff; }
-    .potential-critical { background-color: #000000; color: #ffffff; }
-
-    /* Footer */
-    .footer {
-        font-size: 12px;
-        color: #544741;
-        margin-top: 20px;
-        padding-top: 10px;
-        border-top: 1px solid #e0c09d;
-    }
-
-    /* Desktop table view - hidden on mobile by default */
-    @media screen and (min-width: 768px) {
-        h1 { font-size: 22px; }
-        .header-logo img { max-height: 60px; max-width: 140px; }
+    /* Mobile responsive styles */
+    @media screen and (max-width: 768px) {
+        body { padding: 10px; }
+        h1 { font-size: 14pt; }
+        .header { display: block; text-align: center; }
+        .header-logo { display: block; width: 100%; margin-bottom: 10px; }
+        .header-title { display: block; }
+        table.data, table.data thead, table.data tbody, table.data th, table.data td, table.data tr { display: block; }
+        table.data thead tr { position: absolute; top: -9999px; left: -9999px; }
+        table.data tr { border: 1px solid #e0c09d; border-left: 4px solid #ce372f; margin-bottom: 15px; background-color: #ffffff; }
+        table.data tr:nth-child(even) { background-color: #f7f5f2; }
+        table.data td { border: none; border-bottom: 1px solid #e0c09d; padding: 10px; padding-left: 40%; position: relative; text-align: left; }
+        table.data td:last-child { border-bottom: none; }
+        table.data td:before { content: attr(data-label); position: absolute; left: 10px; width: 35%; padding-right: 10px; font-weight: bold; color: #544741; text-transform: uppercase; font-size: 8pt; }
     }
 </style>
 </head>
@@ -286,7 +189,18 @@ try {
     if ($Incidents.Count -eq 0) {
         $HtmlBody += '<p class="no-incidents">No safety incidents reported in the last 24 hours.</p>'
     } else {
-        # Mobile-friendly card layout
+        # Table layout
+        $HtmlBody += @"
+<table class="data">
+    <tr>
+        <th>Potential</th>
+        <th>Ref No</th>
+        <th>Date Reported</th>
+        <th>Workgroup</th>
+        <th>Event Type</th>
+        <th>Brief Description</th>
+    </tr>
+"@
         foreach ($Incident in $Incidents) {
             # Set potential badge class
             $PotentialClass = switch ($Incident.Potential) {
@@ -305,30 +219,17 @@ try {
             $SafeDesc = [System.Web.HttpUtility]::HtmlEncode($Incident.BriefDesc)
 
             $HtmlBody += @"
-<div class="incident-card">
-    <div class="incident-header">
-        <span class="incident-ref">Ref: $($Incident.RefNo)</span>
-        <span class="potential-badge $PotentialClass">$PotentialText</span>
-    </div>
-    <div class="incident-row">
-        <span class="incident-label">Date Reported:</span>
-        <span class="incident-value">$($Incident.DateReported)</span>
-    </div>
-    <div class="incident-row">
-        <span class="incident-label">Workgroup:</span>
-        <span class="incident-value">$SafeWorkgroup</span>
-    </div>
-    <div class="incident-row">
-        <span class="incident-label">Event Type:</span>
-        <span class="incident-value">$SafeEventType</span>
-    </div>
-    <div class="incident-desc">
-        <span class="incident-label">Description:</span><br>
-        <span class="incident-value">$SafeDesc</span>
-    </div>
-</div>
+    <tr>
+        <td data-label="Potential"><span class="$PotentialClass">$PotentialText</span></td>
+        <td data-label="Ref No">$($Incident.RefNo)</td>
+        <td data-label="Date Reported">$($Incident.DateReported)</td>
+        <td data-label="Workgroup">$SafeWorkgroup</td>
+        <td data-label="Event Type">$SafeEventType</td>
+        <td data-label="Description">$SafeDesc</td>
+    </tr>
 "@
         }
+        $HtmlBody += "</table>"
     }
 
     $HtmlFooter = @"
