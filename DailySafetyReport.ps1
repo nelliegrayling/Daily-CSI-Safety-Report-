@@ -123,19 +123,20 @@ try {
         $LogoBase64 = [System.Convert]::ToBase64String($LogoBytes)
     }
 
-    # Build HTML report - MRL Brand Guidelines with Responsive Table Layout
+    # Build HTML report - MRL Brand Guidelines with Landscape Layout
     $HtmlHead = @"
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+    @page { size: landscape; margin: 15mm; }
     body { font-family: 'Century Gothic', sans-serif; font-size: 10pt; color: #000000; margin: 0; padding: 20px; -webkit-text-size-adjust: 100%; }
-    .header { width: 100%; margin-bottom: 20px; border-bottom: 3px solid #ce372f; padding-bottom: 15px; }
-    .header table { border-collapse: collapse; border: none; }
-    .header td { vertical-align: middle; padding: 0; border: none; }
-    .header-logo img { max-height: 60px; max-width: 140px; margin-right: 15px; vertical-align: middle; }
-    h1 { color: #ce372f; font-size: 18pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+    .header { width: 100%; margin-bottom: 20px; }
+    .header-logo { margin-bottom: 10px; }
+    .header-logo img { max-height: 60px; max-width: 140px; }
+    .header-line { border-bottom: 3px solid #ce372f; margin-bottom: 10px; }
+    h1 { color: #000000; font-size: 18pt; font-weight: bold; text-transform: uppercase; margin: 0 0 15px 0; }
     table.data { border-collapse: collapse; width: 100%; margin-top: 15px; }
     thead { border-bottom: 3px solid #ce372f; }
     th { background-color: #000000; color: #ffffff; padding: 8px 10px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9pt; }
@@ -158,9 +159,6 @@ try {
         body { padding: 10px; }
         h1 { font-size: 14pt; }
         .header { text-align: center; }
-        .header table, .header tr, .header td { display: block; width: 100%; }
-        .header-logo { margin-bottom: 10px; }
-        .header-logo img { margin-right: 0; }
         table.data, table.data thead, table.data tbody, table.data th, table.data td, table.data tr { display: block; }
         table.data thead tr { position: absolute; top: -9999px; left: -9999px; }
         table.data tr { border: 1px solid #e0c09d; border-left: 4px solid #ce372f; margin-bottom: 15px; background-color: #ffffff; }
@@ -168,6 +166,12 @@ try {
         table.data td { border: none; border-bottom: 1px solid #e0c09d; padding: 10px; padding-left: 40%; position: relative; text-align: left; }
         table.data td:last-child { border-bottom: none; }
         table.data td:before { content: attr(data-label); position: absolute; left: 10px; width: 35%; padding-right: 10px; font-weight: bold; color: #544741; text-transform: uppercase; font-size: 8pt; }
+    }
+
+    /* Print styles for landscape */
+    @media print {
+        @page { size: landscape; margin: 10mm; }
+        body { padding: 0; }
     }
 </style>
 </head>
@@ -182,10 +186,9 @@ try {
 
     $HtmlBody = @"
 <div class="header">
-    <table><tr>
-        <td class="header-logo">$LogoHtml</td>
-        <td><h1>Safety Incident Report</h1></td>
-    </tr></table>
+    <div class="header-logo">$LogoHtml</div>
+    <div class="header-line"></div>
+    <h1>Safety Incident Report</h1>
 </div>
 <div class="summary">
     <strong>Report Period:</strong> $($StartTime.ToString("dd/MM/yyyy HH:mm")) - $($EndTime.ToString("dd/MM/yyyy HH:mm")) AWST<br>
@@ -261,8 +264,8 @@ try {
     $TempHtmlPath = Join-Path $env:TEMP "SafetyReport_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
     $FullHtml | Out-File -FilePath $TempHtmlPath -Encoding UTF8
 
-    # Convert HTML to PDF using Chrome headless
-    & $ChromePath --headless --disable-gpu --no-pdf-header-footer --print-to-pdf="$PdfPath" $TempHtmlPath 2>$null
+    # Convert HTML to PDF using Chrome headless (landscape A4)
+    & $ChromePath --headless --disable-gpu --no-pdf-header-footer --print-to-pdf="$PdfPath" --print-to-pdf-no-header $TempHtmlPath 2>$null
     Start-Sleep -Seconds 3  # Wait for PDF to be written
 
     if (-not (Test-Path $PdfPath)) {
