@@ -25,6 +25,8 @@ $RecipientEmail = "nellie.grayling@mrl.com.au"
 $ReportSubject = "Daily Safety Incident Report - $(Get-Date -Format 'dd/MM/yyyy')"
 $SourceFolderName = "Safety Incidents"
 $LogoPath = "H:\Other\CSI Logo\CSI logo (black).png"
+$ReportsFolder = "C:\Users\Nellie.grayling\Daily CSI Safety Report\Reports"
+$ChromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 # Calculate time range (last 24 hours)
 $EndTime = Get-Date
@@ -135,10 +137,11 @@ try {
     .header-logo img { max-height: 60px; max-width: 140px; margin-right: 15px; vertical-align: middle; }
     h1 { color: #ce372f; font-size: 18pt; font-weight: bold; text-transform: uppercase; margin: 0; }
     table.data { border-collapse: collapse; width: 100%; margin-top: 15px; }
-    th { background-color: #ce372f; color: #ffffff; padding: 8px 10px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9pt; }
-    td { border: 1px solid #e0c09d; padding: 8px 10px; vertical-align: top; font-size: 9pt; }
-    tr:nth-child(odd) td { background-color: #ffffff; }
-    tr:nth-child(even) td { background-color: #f7f5f2; }
+    thead { border-bottom: 3px solid #ce372f; }
+    th { background-color: #000000; color: #ffffff; padding: 8px 10px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9pt; }
+    td { border: 1px solid #e0e0e0; padding: 8px 10px; vertical-align: top; font-size: 9pt; }
+    tbody tr:nth-child(odd) td { background-color: #ffffff; }
+    tbody tr:nth-child(even) td { background-color: #f5f5f5; }
     .summary { background-color: #f1ede7; padding: 15px; margin-bottom: 15px; border-left: 4px solid #ce372f; }
     .summary strong { color: #ce372f; text-transform: uppercase; }
     .no-incidents { color: #000000; font-weight: bold; }
@@ -196,14 +199,17 @@ try {
         # Table layout
         $HtmlBody += @"
 <table class="data">
-    <tr>
-        <th>Potential</th>
-        <th>Ref No</th>
-        <th>Date Reported</th>
-        <th>Workgroup</th>
-        <th>Event Type</th>
-        <th>Brief Description</th>
-    </tr>
+    <thead>
+        <tr>
+            <th>Potential</th>
+            <th>Ref No</th>
+            <th>Date Reported</th>
+            <th>Workgroup</th>
+            <th>Event Type</th>
+            <th>Brief Description</th>
+        </tr>
+    </thead>
+    <tbody>
 "@
         foreach ($Incident in $Incidents) {
             # Set potential badge class
@@ -233,7 +239,7 @@ try {
     </tr>
 "@
         }
-        $HtmlBody += "</table>"
+        $HtmlBody += "</tbody></table>"
     }
 
     $HtmlFooter = @"
@@ -247,12 +253,34 @@ try {
 
     $FullHtml = $HtmlHead + $HtmlBody + $HtmlFooter
 
-    # Create and send the email
+    # Generate PDF filename with timestamp
+    $PdfFileName = "Daily Safety Incident Report - $(Get-Date -Format 'yyyy-MM-dd_HHmmss').pdf"
+    $PdfPath = Join-Path $ReportsFolder $PdfFileName
+
+    # Create temp HTML file for conversion
+    $TempHtmlPath = Join-Path $env:TEMP "SafetyReport_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
+    $FullHtml | Out-File -FilePath $TempHtmlPath -Encoding UTF8
+
+    # Convert HTML to PDF using Chrome headless
+    & $ChromePath --headless --disable-gpu --no-pdf-header-footer --print-to-pdf="$PdfPath" $TempHtmlPath 2>$null
+    Start-Sleep -Seconds 3  # Wait for PDF to be written
+
+    if (-not (Test-Path $PdfPath)) {
+        throw "Failed to generate PDF file"
+    }
+
+    Write-Host "PDF saved to: $PdfPath"
+
+    # Create and send the email with PDF attachment
     $Mail = $Outlook.CreateItem(0)  # 0 = Mail item
     $Mail.To = $RecipientEmail
     $Mail.Subject = $ReportSubject
-    $Mail.HTMLBody = $FullHtml
+    $Mail.Body = "Please find attached the Daily Safety Incident Report.`n`nReport Period: $($StartTime.ToString('dd/MM/yyyy HH:mm')) - $($EndTime.ToString('dd/MM/yyyy HH:mm')) AWST`nTotal Incidents: $($Incidents.Count)`n`nThis is an automated report."
+    $Mail.Attachments.Add($PdfPath)
     $Mail.Send()
+
+    # Clean up temp HTML file
+    Remove-Item -Path $TempHtmlPath -Force -ErrorAction SilentlyContinue
 
     Write-Host "Report sent successfully to $RecipientEmail"
     Write-Host "Incidents found: $($Incidents.Count)"
