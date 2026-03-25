@@ -30,15 +30,14 @@ Current Settings:
   - Schedule:          8:00 AM daily (AWST)
   - Time Range:        Previous 24 hours
   - Source Folder:     Inbox\Safety Incidents (falls back to Inbox if empty)
-  - Processed Folder:  Inbox\Safety Incidents - Processed
   - Logo:              H:\Other\CSI Logo\CSI logo (black).png
   - Format:            Mobile-friendly responsive design
+  - Email Handling:    Emails stay in folder permanently (not moved after processing)
 
 Incident Filtering:
   - Only incidents where "Date Reported" falls within the 24-hour report
     period are included in the report
-  - Emails received within 24hrs but with older "Date Reported" are still
-    moved to the processed folder but NOT included in the report
+  - Emails stay in the Safety Incidents folder permanently
   - This ensures the report only shows incidents that occurred within the
     reporting window
 

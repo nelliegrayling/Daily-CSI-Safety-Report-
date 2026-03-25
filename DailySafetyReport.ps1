@@ -24,7 +24,6 @@ $SenderEmail = "noreply@inxsoftware.com"
 $RecipientEmail = "nellie.grayling@mrl.com.au"
 $ReportSubject = "Daily Safety Incident Report - $(Get-Date -Format 'dd/MM/yyyy')"
 $SourceFolderName = "Safety Incidents"
-$ProcessedFolderName = "Safety Incidents - Processed"
 $LogoPath = "H:\Other\CSI Logo\CSI logo (black).png"
 
 # Calculate time range (last 24 hours)
@@ -63,7 +62,6 @@ try {
 
     # Collect incident data - parse INX InControl format
     $Incidents = @()
-    $ProcessedEmails = @()  # Store email objects to move after successful send
     foreach ($Email in $FilteredItems) {
         if ($Email.ReceivedTime -ge $StartTime -and $Email.ReceivedTime -le $EndTime) {
             $Body = $Email.Body
@@ -108,9 +106,6 @@ try {
                     BriefDesc     = $BriefDesc
                 }
             }
-
-            # Store email object for moving later (move all processed emails, even if not in report)
-            $ProcessedEmails += $Email
         }
     }
 
@@ -357,38 +352,12 @@ try {
     Write-Host "Report sent successfully to $RecipientEmail"
     Write-Host "Incidents found: $($Incidents.Count)"
 
-    # Move processed emails to subfolder (only on successful send)
-    if ($ProcessedEmails.Count -gt 0) {
-        try {
-            # Get or create the processed folder
-            $ProcessedFolder = $null
-            try {
-                $ProcessedFolder = $Inbox.Folders.Item($ProcessedFolderName)
-            } catch {
-                # Folder doesn't exist, create it
-                $ProcessedFolder = $Inbox.Folders.Add($ProcessedFolderName)
-                Write-Host "Created folder: $ProcessedFolderName"
-            }
-
-            # Move each email to the processed folder
-            $movedCount = 0
-            foreach ($Email in $ProcessedEmails) {
-                $Email.Move($ProcessedFolder) | Out-Null
-                $movedCount++
-            }
-            Write-Host "Moved $movedCount emails to '$ProcessedFolderName'"
-        } catch {
-            Write-Warning "Failed to move emails: $_"
-        }
-    }
-
 } catch {
     Write-Error "Failed to generate report: $_"
     exit 1
 } finally {
     # Clean up COM objects
     if ($Mail) { [System.Runtime.InteropServices.Marshal]::ReleaseComObject($Mail) | Out-Null }
-    if ($ProcessedFolder) { [System.Runtime.InteropServices.Marshal]::ReleaseComObject($ProcessedFolder) | Out-Null }
     if ($SourceFolder -and $SourceFolder -ne $Inbox) { [System.Runtime.InteropServices.Marshal]::ReleaseComObject($SourceFolder) | Out-Null }
     if ($FilteredItems) { [System.Runtime.InteropServices.Marshal]::ReleaseComObject($FilteredItems) | Out-Null }
     if ($Inbox) { [System.Runtime.InteropServices.Marshal]::ReleaseComObject($Inbox) | Out-Null }
