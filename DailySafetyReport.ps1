@@ -134,9 +134,9 @@ try {
     body { font-family: 'Century Gothic', sans-serif; font-size: 10pt; color: #000000; margin: 0; padding: 20px; -webkit-text-size-adjust: 100%; }
     .header { width: 100%; margin-bottom: 20px; }
     .header-logo { margin-bottom: 10px; }
-    .header-logo img { max-height: 60px; max-width: 140px; }
+    .header-logo img { max-height: 90px; max-width: 210px; }
     .header-line { border-bottom: 3px solid #ce372f; margin-bottom: 10px; }
-    h1 { color: #000000; font-size: 18pt; font-weight: bold; text-transform: uppercase; margin: 0 0 15px 0; }
+    h1 { color: #000000; font-size: 18pt; font-weight: bold; margin: 0 0 15px 0; }
     table.data { border-collapse: collapse; width: 100%; margin-top: 15px; }
     thead { border-bottom: 3px solid #ce372f; }
     th { background-color: #000000; color: #ffffff; padding: 8px 10px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9pt; }
@@ -184,11 +184,14 @@ try {
         $LogoHtml = "<img src=`"data:image/png;base64,$LogoBase64`" alt=`"CSI Logo`">"
     }
 
+    # Format date for header (DD Month YYYY)
+    $ReportDateFormatted = $EndTime.ToString("dd MMMM yyyy")
+
     $HtmlBody = @"
 <div class="header">
     <div class="header-logo">$LogoHtml</div>
     <div class="header-line"></div>
-    <h1>Safety Incident Report</h1>
+    <h1>Daily Safety Incident Report $ReportDateFormatted</h1>
 </div>
 <div class="summary">
     <strong>Report Period:</strong> $($StartTime.ToString("dd/MM/yyyy HH:mm")) - $($EndTime.ToString("dd/MM/yyyy HH:mm")) AWST<br>
