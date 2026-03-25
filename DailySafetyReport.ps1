@@ -129,10 +129,10 @@ try {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body { font-family: 'Century Gothic', sans-serif; font-size: 10pt; color: #000000; margin: 0; padding: 20px; -webkit-text-size-adjust: 100%; }
-    .header { display: table; width: 100%; margin-bottom: 20px; border-bottom: 3px solid #ce372f; padding-bottom: 15px; }
-    .header-logo { display: table-cell; vertical-align: middle; width: 150px; }
-    .header-logo img { max-height: 60px; max-width: 140px; }
-    .header-title { display: table-cell; vertical-align: middle; }
+    .header { width: 100%; margin-bottom: 20px; border-bottom: 3px solid #ce372f; padding-bottom: 15px; }
+    .header table { border-collapse: collapse; border: none; }
+    .header td { vertical-align: middle; padding: 0; border: none; }
+    .header-logo img { max-height: 60px; max-width: 140px; margin-right: 15px; vertical-align: middle; }
     h1 { color: #ce372f; font-size: 18pt; font-weight: bold; text-transform: uppercase; margin: 0; }
     table.data { border-collapse: collapse; width: 100%; margin-top: 15px; }
     th { background-color: #ce372f; color: #ffffff; padding: 8px 10px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9pt; }
@@ -154,9 +154,10 @@ try {
     @media screen and (max-width: 768px) {
         body { padding: 10px; }
         h1 { font-size: 14pt; }
-        .header { display: block; text-align: center; }
-        .header-logo { display: block; width: 100%; margin-bottom: 10px; }
-        .header-title { display: block; }
+        .header { text-align: center; }
+        .header table, .header tr, .header td { display: block; width: 100%; }
+        .header-logo { margin-bottom: 10px; }
+        .header-logo img { margin-right: 0; }
         table.data, table.data thead, table.data tbody, table.data th, table.data td, table.data tr { display: block; }
         table.data thead tr { position: absolute; top: -9999px; left: -9999px; }
         table.data tr { border: 1px solid #e0c09d; border-left: 4px solid #ce372f; margin-bottom: 15px; background-color: #ffffff; }
@@ -178,8 +179,10 @@ try {
 
     $HtmlBody = @"
 <div class="header">
-    <div class="header-logo">$LogoHtml</div>
-    <div class="header-title"><h1>Daily Safety Incident Report</h1></div>
+    <table><tr>
+        <td class="header-logo">$LogoHtml</td>
+        <td><h1>Safety Incident Report</h1></td>
+    </tr></table>
 </div>
 <div class="summary">
     <strong>Report Period:</strong> $($StartTime.ToString("dd/MM/yyyy HH:mm")) - $($EndTime.ToString("dd/MM/yyyy HH:mm")) AWST<br>
